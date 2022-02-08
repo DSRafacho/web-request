@@ -1,0 +1,162 @@
+ <div>
+
+                    <label htmlFor="url">Url</label>
+                    <input id="url" type="text" className="text-zinc-700"
+                           value={url}
+                           onChange={
+                               event => setUrl(event.target.value)
+                           }
+                    />
+
+                </div>
+
+
+                <div>
+
+                    <label htmlFor="http-verb">Verbo HTTP</label>
+                    <select id="http-verb"
+                            onChange={
+                                event => setHttpMethod(event.target.value)
+                            }
+                    >
+                        <option value="get">GET</option>
+                        <option value="post">POST</option>
+                        <option value="put">PUT</option>
+                        <option value="patch">PATCH</option>
+                        <option value="delete">DELETE</option>
+                    </select>
+
+                </div>
+
+                {
+                    httpMethod !== 'get' &&
+                    <div className="data body">
+
+                        <h1>BODY</h1>
+
+                        <textarea name="" id="" cols={51} rows={10} className={Constants.inputPatternClasses} value={body}
+                                  onChange={ event => setBody(event.target.value) }
+                        >
+                        </textarea>
+
+                    </div>
+                }
+
+                <div>
+
+                    <label htmlFor="12">Headers</label>
+                    {
+                        headers.map(
+                            (header, index) =>
+                                <div key={index} className="gap-40">
+
+                                    <input id="12" type="text" placeholder='Chave' className="border-solid border-4 border-sky-500 hover:border-double"
+                                           value={headers[index].chave}
+                                           onChange={
+                                               event => {
+                                                   const newHeaders = [...headers]
+                                                   newHeaders[index].chave = event.target.value
+
+                                                   setHeaders(newHeaders)
+                                               }
+                                           }
+                                    />
+
+                                    <input id="12" type="text" placeholder='Valor' className="border-solid border-4 border-sky-500 hover:border-double"
+                                           value={headers[index].valor}
+                                           onChange={
+                                               event => {
+                                                   const newHeaders = [...headers]
+                                                   newHeaders[index].valor = event.target.value
+
+                                                   setHeaders(newHeaders)
+                                               }
+                                           }
+                                    />
+
+                                </div>
+                        )
+                    }
+
+                </div>
+
+                {/* MULTPART */}
+
+                {
+                    error &&
+                    <div>
+                        <h5>Erro</h5>
+
+                        <p> { error } </p>
+                    </div>
+                }
+
+                <div>
+
+                    <button className="bg-sky-600 rounded-3xl text-white border-2 border-sky-900 p-2 hover:bg-sky-700"
+                            onClick={
+                                async () => {
+                                    if(url === '') {
+                                        toast.error(
+                                            <div>
+                                                <h5>Insira uma url</h5>
+                                            </div>
+                                        )
+                                        return
+                                    }
+
+                                    generateHeaderOrMultipart('header')
+                                    generateHeaderOrMultipart('multipart')
+
+                                    toast.promise(
+                                        // @ts-ignore
+                                        axios({ method: httpMethod, url, data: body ? JSON.parse(body) : {}, headers: header, } )
+                                            .then(
+                                                res => {
+                                                    setRequestData(res.data)
+                                                    setRequestStatus(`${res.status}`)
+                                                }
+                                            )
+                                        ,
+                                        {
+                                            pending: "Tá indo meu truta",
+                                            success: "Deu bom meu truta",
+                                            error: "Meu truta... Deu ruim",
+                                        }
+                                    )
+                                }
+                            }
+                    >Fazer requisição</button>
+
+                    <button className="
+                    bg-sky-600
+                    rounded-3xl
+                    text-white
+                    border-2 border-sky-900
+                    p-2
+                    hover:bg-sky-700
+                "
+                            onClick={
+                                () => setRequestData('')
+                            }
+                    >Zerar o response</button>
+
+                </div>
+
+                <div>
+                    <h5>Status: <span>{ requestStatus }</span></h5>
+                    <h6>Descrição status</h6>
+
+                    <h5>Data</h5>
+
+                    <div className={Constants.inputPatternClasses}>
+
+                        {
+                            requestData !== {}  ?
+                                JSON.stringify(requestData) :
+                                <>Sem nada ainda 😢</>
+                        }
+
+                    </div>
+
+                </div>

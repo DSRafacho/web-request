@@ -1,0 +1,38 @@
+{/* <div>
+
+                    <label htmlFor="12">Multipart</label>
+
+                    {
+                        multiparts.map(
+                            (multipart, index) =>
+                                <div key={index}>
+
+                                    <input id="12" type="text" placeholder='Chave' className="border-solid border-4 border-sky-500 hover:border-double"
+                                           value={multiparts[index].chave}
+                                           onChange={
+                                               event => {
+                                                   const newMultipart = [...multiparts]
+                                                   newMultipart[index].chave = event.target.value
+
+                                                   setMultparts(newMultipart)
+                                               }
+                                           }
+                                    />
+                                    <input id="12" type="text" placeholder='Valor' className="border-solid border-4 border-sky-500 hover:border-double"
+                                           value={multiparts[index].valor}
+                                           onChange={
+                                               event => {
+                                                   const newMultipart = [...multiparts]
+                                                   newMultipart[index].valor = event.target.value
+
+                                                   setMultparts(newMultipart)
+                                               }
+                                           }
+                                    />
+
+                                </div>
+                        )
+                    }
+
+                    <input type="checkbox" className="checked:border-y-green-900" />
+                </div>*/}

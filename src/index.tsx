@@ -3,11 +3,28 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Provider } from "react-redux";
+import { store } from "./redux/configReducer";
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.min.css';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <Provider store={ store }>
+      <React.StrictMode>
+          <App />
+          <ToastContainer
+              position="top-left"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+          />
+      </React.StrictMode>
+  </Provider> ,
   document.getElementById('root')
 );
 

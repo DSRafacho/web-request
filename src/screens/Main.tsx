@@ -2,7 +2,7 @@ import { useState } from "react";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { ReduxDispatch, ReduxState } from "../interfaces/redux";
+import { ReduxState } from "../interfaces/redux";
 // @ts-ignore
 import { JsonFormatter } from 'react-json-formatter'
 
@@ -24,8 +24,8 @@ function Main(props: props) {
     const [httpMethod, setHttpMethod] = useState('get')
     const [body, setBody] = useState('')
 
-    const [headers, setHeaders] = useState( [ { chave: "", valor: "" } ] )
-    const [multiparts, setMultparts] = useState([ { chave: "", valor: "" } ] )
+    const [headers, setHeaders] = useState([{ chave: "", valor: "" }])
+    const [multiparts, setMultparts] = useState([{ chave: "", valor: "" }])
 
     const [requestData, setRequestData] = useState({})
     const [requestStatus, setRequestStatus] = useState('Sem status ainda 😢')
@@ -56,19 +56,20 @@ function Main(props: props) {
         setHeader(newHeaderObject)
     }
 
-    const sample = `{
-   
-}
-`
-
     const JsonStyle = {
-        propertyStyle: { color: 'red' },
+        propertyStyle: { color: 'blue' },
         stringStyle: { color: 'green' },
         numberStyle: { color: 'darkorange' }
     }
 
-    return (
-        <div className="w-full min-h-full h-screen min-h-screen bg-white dark:bg-slate-900 text-sky-400/75 font-sans">
+    return ( //bg-white
+        <div className="
+            w-full h-full
+            bg-sky-400 dark:bg-sky-900
+            text-white font-sans dark:text-sky-400/75
+            
+        "
+        >
 
             <div className="flex flex-row justify-center pb-5">
                 <h1 className="text-3xl font-bold underline mt-5">Web Request</h1>
@@ -80,7 +81,7 @@ function Main(props: props) {
                 <div className="col-span-2">
                     <label htmlFor="http-verb" className="block font-bold">Método</label>
                     <select id="http-verb" className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg"
-                            onChange={ event => setHttpMethod(event.target.value) }
+                        onChange={event => setHttpMethod(event.target.value)}
                     >
                         <option value="get">GET</option>
                         <option value="post">POST</option>
@@ -94,8 +95,8 @@ function Main(props: props) {
                 <div className="col-span-6">
                     <label htmlFor="url" className="block font-bold">Url</label>
                     <input id="url" type="text" className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg"
-                           value={url}
-                           onChange={event => setUrl(event.target.value)}
+                        value={url}
+                        onChange={event => setUrl(event.target.value)}
                     />
                 </div>
 
@@ -115,31 +116,31 @@ function Main(props: props) {
 
                                     <div className="flex justify-center gap-5">
                                         <input type="text" placeholder='Chave' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg my-2 p-2"
-                                               value={headers[index].chave}
-                                               onChange={
-                                                   event => {
-                                                       const newHeaders = [...headers]
-                                                       newHeaders[index].chave = event.target.value
+                                            value={headers[index].chave}
+                                            onChange={
+                                                event => {
+                                                    const newHeaders = [...headers]
+                                                    newHeaders[index].chave = event.target.value
 
-                                                       setHeaders(newHeaders)
-                                                   }
-                                               }
+                                                    setHeaders(newHeaders)
+                                                }
+                                            }
                                         />
 
                                         <input type="text" placeholder='Valor' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg my-2 p-2"
-                                               value={headers[index].valor}
-                                               onChange={
-                                                   event => {
-                                                       const newHeaders = [...headers]
-                                                       newHeaders[index].valor = event.target.value
+                                            value={headers[index].valor}
+                                            onChange={
+                                                event => {
+                                                    const newHeaders = [...headers]
+                                                    newHeaders[index].valor = event.target.value
 
-                                                       setHeaders(newHeaders)
-                                                   }
-                                               }
+                                                    setHeaders(newHeaders)
+                                                }
+                                            }
                                         />
                                         <button
-                                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2 rounded-full"
-                                            disabled={index !== 1 ? true : false }
+                                            className="bg-sky-700 hover:bg-sky-800 hover:bg-sky-800 text-white font-bold px-2 rounded-full"
+                                            disabled={index !== 1 ? true : false}
                                             onClick={
                                                 event => {
                                                     const newHeaders = headers.filter(
@@ -160,8 +161,8 @@ function Main(props: props) {
 
                     <div className="flex flex-row justify-center pb-5 mt-10">
                         <button
-                            className="bg-sky-600 rounded-3xl text-white border-2 border-sky-900 p-2hover:bg-sky-700 p-3"
-                            onClick={ event => setHeaders([...headers, { chave: "", valor: "" }]) }
+                            className="bg-sky-700 hover:bg-sky-800 rounded-3xl text-white border-2 border-sky-900 p-2hover:bg-sky-700 p-3"
+                            onClick={event => setHeaders([...headers, { chave: "", valor: "" }])}
                         >Adicionar</button>
                     </div>
 
@@ -178,7 +179,7 @@ function Main(props: props) {
                         <label className="font-bold block">Body</label>
 
                         <textarea name="" id="" cols={51} rows={10} className={Constants.inputPatternClasses} value={body}
-                                  onChange={event => setBody(event.target.value)}
+                            onChange={event => setBody(event.target.value)}
                         >
                         </textarea>
                     </div>
@@ -192,42 +193,41 @@ function Main(props: props) {
 
                     <div className="flex flex-row justify-center gap-14">
 
-                        <button className="bg-sky-600 rounded-3xl text-white border-2 border-sky-900 p-2 hover:bg-sky-700"
-                                onClick={
-                                    async () => {
-                                        if (url === '') {
-                                            toast.error(
-                                                <div>
-                                                    <h5>Insira uma url</h5>
-                                                </div>
-                                            )
-                                            return
-                                        }
+                        {/* <button type="button" className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500" */}
 
-                                        generateHeader()
+                        <button className="bg-sky-700 hover:bg-sky-800 rounded-3xl text-white border-2 border-sky-900 p-2"
+                            onClick={
+                                async () => {
+                                    if (url === '') {
+                                        toast.error(
+                                            <div>
+                                                <h5>Insira uma url</h5>
+                                            </div>
+                                        )
+                                        return
+                                    }
 
-                                        toast.promise(
-                                            // @ts-ignore
-                                            axios({ method: httpMethod, url, data: body ? JSON.parse(body) : {}, headers: header, })
-                                                .then(
-                                                    res => {
-                                                        setRequestData(res.data)
-                                                        setRequestStatus(`${res.status}`)
-                                                    }
-                                                ).catch( e => console.log(e) )
-                                            ,
-                                            {
-                                                pending: "Tá indo meu truta",
-                                                success: "Deu bom meu truta",
-                                                error: "Meu truta... Deu ruim",
+                                    generateHeader()
+
+                                    // @ts-ignore
+                                    axios({ method: httpMethod, url, data: body ? JSON.parse(body) : {}, headers: header, })
+                                        .then(
+                                            res => {
+                                                setRequestData(res.data)
+                                                setRequestStatus(`${res.status}`)
                                             }
                                         )
-                                    }
+                                        .catch(
+                                            error => console.log(error)
+                                        )
+
+                                    // axios.get('/p/')
                                 }
+                            }
                         >Fazer requisição</button>
 
-                        <button className="bg-sky-600 rounded-3xl text-white border-2 border-sky-900 p-3 hover:bg-sky-700"
-                                onClick={ () => setRequestData('') }
+                        <button className="bg-sky-700 hover:bg-sky-800 rounded-3xl text-white border-2 border-sky-900 p-3"
+                            onClick={() => { setRequestData({}); setRequestStatus('Sem status ainda 😢') }}
                         >Zerar o response</button>
 
                     </div>
@@ -243,28 +243,33 @@ function Main(props: props) {
                     <div className="flex flex-row justify-center gap-14">
 
                         <h5>Status: <span>{requestStatus}</span></h5>
-                        {/*<h5>Descrição status</h5>*/}
+
+                        <br />
+
+                        <h5>Descrição status</h5>
 
 
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-8 gap-3 px-72 mb-10">
 
-                <div className="col-span-8 text-xl border-solid border-2 border-sky-500 h-64">
+            <div className="w-80     flex justify-center border-2 border-gray-400">
+                <JsonFormatter json={JSON.stringify(requestData)} tabWith='4' JsonStyle={JsonStyle} />
+            </div>
 
-                    {/*<JsonFormatter json={ sample } tabWith='4' JsonStyle={JsonStyle} />*/}
 
-                    <p>
-                        {
-                            JSON.stringify(requestData)
-                        }
-                    </p>
+            {/* <div className="grid grid-cols-8 gap-3 px-72 pb-14">
+
+                <div className="col-span-8 text-xl border-solid border-2 h-64">
+
+                    <div className="w-full h-full border-2 border-gray-400">
+                    <JsonFormatter json={JSON.stringify(requestData)} tabWith='4' JsonStyle={JsonStyle} />
+                    </div>
 
                 </div>
 
-            </div>
+            </div> */}
 
 
         </div>

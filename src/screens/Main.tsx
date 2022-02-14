@@ -53,15 +53,24 @@ function Main() {
 
 
             <div className="
-                vb:grid vb:grid-cols-8 md:grid-cols-1 so:flex so:flex-col
+                vb:grid vb:grid-cols-8
+                md:grid md:grid-cols-8
+                so:flex so:flex-col
+
                 px-12 gap-12
             ">
 
-                <div className="vb:col-span-4 md:col-span-8">
+                <div className="vb:col-span-4 md:col-span-3">
 
                     <div className="vb:grid vb:grid-cols-8 gap-3 mb-10">
 
-                        <div className="vb:col-span-2 xl:col-span-2 so:col-span-8">
+                        <div className="
+                            vb:col-span-2
+                            xl:col-span-2
+                            md:col-span-2
+                            so:col-span-8
+                        "
+                        >
                             <label htmlFor="http-verb" className="block font-bold">Método</label>
                             <select id="http-verb" className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg"
                                 onChange={event => setHttpMethod(event.target.value)}
@@ -110,7 +119,7 @@ function Main() {
                             {
                                 headers.map(
                                     (header, index) =>
-                                        <div key={index} className="vb:grid vb:grid-cols-8 gap-5 so:flex so:flex-col so:border so:p-3 so:mb-5">
+                                        <div key={index} className="vb:grid vb:grid-cols-8 gap-5 so:flex so:flex-col so:p-3 so:mb-5">
 
                                             <div className="so:col-span-3">
                                                 <input type="text" placeholder='Chave' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg my-2 p-2"
@@ -177,7 +186,11 @@ function Main() {
                                     rounded-3xl vb:p-1 so:p-3
                                     text-white
                                     vb:w-1/3
-                                ">Adicionar Header</button>
+                                "
+                                    onClick={
+                                        () => setHeaders( [ ...headers, { chave: "", valor: "" } ] )
+                                    }
+                                >Adicionar Header</button>
 
 
                                     <button className="
@@ -218,6 +231,7 @@ function Main() {
                                                                 startThePromise,
                                                                 {
                                                                     render: <div><p>A requisição foi um sucesso!</p></div>,
+                                                                    draggable: true,
                                                                     type: "success",
                                                                     isLoading: false,
                                                                     closeButton: true,
@@ -229,15 +243,14 @@ function Main() {
                                                     )
                                                     .catch(
                                                         error => {
-                                                            // console.log(Object.keys(error));
                                                             setRequestData(error)
                                                             setRequestStatus(`${error.request.status}`)
-
 
                                                             toast.update(
                                                                 startThePromise,
                                                                 {
                                                                     render: <div><h1 className="font-bold">Oops...</h1><>Ocorreu um erro na sua requisição</></div>,
+                                                                    draggable: true,
                                                                     type: "error",
                                                                     isLoading: false,
                                                                     closeButton: true,
@@ -285,7 +298,7 @@ function Main() {
 
 
 
-                <div className="col-span-4">
+                <div className="col-span-4 md:col-span-5">
 
                     <div className="grid grid-cols-8 gap-3 mb-10 mt-6">
 

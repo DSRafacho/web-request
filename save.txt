@@ -1,38 +1,284 @@
-{/* <div>
+import { useState } from "react";
+import { connect } from "react-redux";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { ReduxState } from "../interfaces/redux";
+// @ts-ignore
+import { JsonFormatter } from 'react-json-formatter'
 
-                    <label htmlFor="12">Multipart</label>
 
+import { Constants } from '../Constants'
+
+interface config {
+    headers: string[];
+    multipart: string[];
+}
+
+interface props {
+    config?: config;
+    dispatch?: Function
+}
+
+function Main(props: props) {
+    const [url, setUrl] = useState('')
+    const [httpMethod, setHttpMethod] = useState('get')
+    const [body, setBody] = useState('')
+
+    const [headers, setHeaders] = useState([{ chave: "", valor: "" }])
+    const [multiparts, setMultparts] = useState([{ chave: "", valor: "" }])
+
+    const [requestData, setRequestData] = useState({})
+    const [requestStatus, setRequestStatus] = useState('Sem status ainda 😢')
+    const [error, setError] = useState('')
+
+    const [header, setHeader] = useState({})
+
+
+    const [multipart, setMultipart] = useState({})
+    /*const [ headerIsJson, setHeaderIsJson ] = useState(false)
+    const [ multipartIsJson, setMultipartIsJson ] = useState(false)*/
+
+    function generateHeader() {
+        interface IterableObject {
+            [iteratedKey: string]: any
+        }
+        const newHeaderObject: IterableObject = {}
+
+        for (let key in headers) {
+            const item = headers[key]
+
+            item.chave !== '' && item.valor !== '' ?
+                newHeaderObject[item.chave] = item.valor
+                :
+                console.log(item)
+        }
+        console.log(newHeaderObject)
+        setHeader(newHeaderObject)
+    }
+
+    const JsonStyle = {
+        propertyStyle: { color: 'blue' },
+        stringStyle: { color: 'green' },
+        numberStyle: { color: 'darkorange' }
+    }
+
+    return ( //bg-white
+        <div className="
+            w-full h-full
+            bg-sky-400 dark:bg-sky-900
+            text-white font-sans dark:text-sky-400/75
+        "
+        >
+
+            <div className="flex flex-row justify-center pb-5">
+                <h1 className="text-3xl font-bold underline mt-5">Web Request</h1>
+            </div>
+
+
+            <div className="grid grid-cols-8 gap-3 px-72 mb-10">
+
+                <div className="col-span-2">
+                    <label htmlFor="http-verb" className="block font-bold">Método</label>
+                    <select id="http-verb" className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg"
+                        onChange={event => setHttpMethod(event.target.value)}
+                    >
+                        <option value="get">GET</option>
+                        <option value="post">POST</option>
+                        <option value="put">PUT</option>
+                        <option value="patch">PATCH</option>
+                        <option value="delete">DELETE</option>
+                    </select>
+                </div>
+
+
+                <div className="col-span-6">
+                    <label htmlFor="url" className="block font-bold">Url</label>
+                    <input id="url" type="text" className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg"
+                        value={url}
+                        onChange={event => setUrl(event.target.value)}
+                    />
+                </div>
+
+            </div>
+
+            <div className="grid grid-cols-8 gap-3 px-72 mb-10">
+                <div className="col-span-8">
+
+                    <div className="flex flex-row justify-center pb-5">
+                        <h1 className="text-xl font-bold  mt-5">Headers</h1>
+                    </div>
                     {
-                        multiparts.map(
-                            (multipart, index) =>
-                                <div key={index}>
+                        headers.map(
+                            (header, index) =>
+                                <div key={index} className="col-span-8">
 
-                                    <input id="12" type="text" placeholder='Chave' className="border-solid border-4 border-sky-500 hover:border-double"
-                                           value={multiparts[index].chave}
-                                           onChange={
-                                               event => {
-                                                   const newMultipart = [...multiparts]
-                                                   newMultipart[index].chave = event.target.value
 
-                                                   setMultparts(newMultipart)
-                                               }
-                                           }
-                                    />
-                                    <input id="12" type="text" placeholder='Valor' className="border-solid border-4 border-sky-500 hover:border-double"
-                                           value={multiparts[index].valor}
-                                           onChange={
-                                               event => {
-                                                   const newMultipart = [...multiparts]
-                                                   newMultipart[index].valor = event.target.value
+                                    <div className="flex justify-center gap-5">
+                                        <input type="text" placeholder='Chave' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg my-2 p-2"
+                                            value={headers[index].chave}
+                                            onChange={
+                                                event => {
+                                                    const newHeaders = [...headers]
+                                                    newHeaders[index].chave = event.target.value
 
-                                                   setMultparts(newMultipart)
-                                               }
-                                           }
-                                    />
+                                                    setHeaders(newHeaders)
+                                                }
+                                            }
+                                        />
+
+                                        <input type="text" placeholder='Valor' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg my-2 p-2"
+                                            value={headers[index].valor}
+                                            onChange={
+                                                event => {
+                                                    const newHeaders = [...headers]
+                                                    newHeaders[index].valor = event.target.value
+
+                                                    setHeaders(newHeaders)
+                                                }
+                                            }
+                                        />
+                                        <button
+                                            className="bg-sky-700 hover:bg-sky-800 text-white font-bold px-2 rounded-full"
+                                            disabled={index !== 1 ? true : false}
+                                            onClick={
+                                                event => {
+                                                    const newHeaders = headers.filter(
+                                                        (item: object, index2: number) => index2 !== index
+                                                    )
+                                                    setHeaders(newHeaders)
+                                                }
+                                            }
+                                        >
+                                            <b className="fw">X</b>
+                                        </button>
+
+                                    </div>
 
                                 </div>
                         )
                     }
 
-                    <input type="checkbox" className="checked:border-y-green-900" />
-                </div>*/}
+                    <div className="flex flex-row justify-center pb-5 mt-10">
+                        <button
+                            className="bg-sky-700 hover:bg-sky-800 rounded-3xl text-white border-2 border-sky-900 p-2hover:bg-sky-700 p-3"
+                            onClick={event => setHeaders([...headers, { chave: "", valor: "" }])}
+                        >Adicionar</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {
+                httpMethod !== 'get' &&
+                <div className="grid grid-cols-8 gap-3 px-72 mb-10">
+
+                    <div className="col-span-8">
+                        <label className="font-bold block">Body</label>
+
+                        <textarea name="" id="" cols={51} rows={10} className={Constants.inputPatternClasses} value={body}
+                            onChange={event => setBody(event.target.value)}
+                        >
+                        </textarea>
+                    </div>
+
+                </div>
+            }
+
+            <div className="grid grid-cols-8 gap-3 px-72 mb-10">
+
+                <div className="col-span-8">
+
+                    <div className="flex flex-row justify-center gap-14">
+
+                        {/* <button type="button" className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500" */}
+
+                        <button className="bg-sky-700 hover:bg-sky-800 rounded-3xl text-white border-2 border-sky-900 p-2"
+                            onClick={
+                                async () => {
+                                    if (url === '') {
+                                        toast.error(
+                                            <div>
+                                                <h5>Insira uma url</h5>
+                                            </div>
+                                        )
+                                        return
+                                    }
+
+                                    generateHeader()
+
+                                    // @ts-ignore
+                                    axios({ method: httpMethod, url, data: body ? JSON.parse(body) : {}, headers: header, })
+                                        .then(
+                                            res => {
+                                                setRequestData(res.data)
+                                                setRequestStatus(`${res.status}`)
+                                            }
+                                        )
+                                        .catch(
+                                            error => console.log(error)
+                                        )
+
+                                    // axios.get('/p/')
+                                }
+                            }
+                        >Fazer requisição</button>
+
+                        <button className="bg-sky-700 hover:bg-sky-800 rounded-3xl text-white border-2 border-sky-900 p-3"
+                            onClick={() => { setRequestData({}); setRequestStatus('Sem status ainda 😢') }}
+                        >Zerar o response</button>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <div className="grid grid-cols-8 gap-3 px-72 mb-10">
+
+                <div className="col-span-8">
+                    <div className="flex flex-row justify-center gap-14">
+
+                        <h5>Status: <span>{requestStatus}</span></h5>
+
+                        <br />
+
+                        <h5>Descrição status</h5>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div className="w-80     flex justify-center border-2 border-gray-400">
+                <JsonFormatter json={JSON.stringify(requestData)} tabWith='4' JsonStyle={JsonStyle} />
+            </div>
+
+
+            {/* <div className="grid grid-cols-8 gap-3 px-72 pb-14">
+
+                <div className="col-span-8 text-xl border-solid border-2 h-64">
+
+                    <div className="w-full h-full border-2 border-gray-400">
+                    <JsonFormatter json={JSON.stringify(requestData)} tabWith='4' JsonStyle={JsonStyle} />
+                    </div>
+
+                </div>
+
+            </div> */}
+
+
+        </div>
+    )
+}
+
+const mapStateToProps = (state: ReduxState) => {
+    return {
+        config: state.config
+    }
+}
+
+export default connect(mapStateToProps, null)(Main)

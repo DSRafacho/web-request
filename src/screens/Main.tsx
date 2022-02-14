@@ -1,42 +1,20 @@
-import { useState } from "react";
-import { connect } from "react-redux";
+import React, { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { ReduxState } from "../interfaces/redux";
+import { Constants } from '../Constants'
 // @ts-ignore
 import { JsonFormatter } from 'react-json-formatter'
 
 
-import { Constants } from '../Constants'
-
-interface config {
-    headers: string[];
-    multipart: string[];
-}
-
-interface props {
-    config?: config;
-    dispatch?: Function
-}
-
-function Main(props: props) {
+function Main() {
     const [url, setUrl] = useState('')
     const [httpMethod, setHttpMethod] = useState('get')
     const [body, setBody] = useState('')
-
     const [headers, setHeaders] = useState([{ chave: "", valor: "" }])
-    const [multiparts, setMultparts] = useState([{ chave: "", valor: "" }])
-
     const [requestData, setRequestData] = useState({})
     const [requestStatus, setRequestStatus] = useState('Sem status ainda 😢')
-    const [error, setError] = useState('')
 
-    const [header, setHeader] = useState({})
-
-
-    const [multipart, setMultipart] = useState({})
-    /*const [ headerIsJson, setHeaderIsJson ] = useState(false)
-    const [ multipartIsJson, setMultipartIsJson ] = useState(false)*/
+    const requestDataDisposition = React.useRef<HTMLInputElement>(null)
 
     function generateHeader() {
         interface IterableObject {
@@ -50,10 +28,10 @@ function Main(props: props) {
             item.chave !== '' && item.valor !== '' ?
                 newHeaderObject[item.chave] = item.valor
                 :
-                console.log(item)
+                console.log()
         }
-        console.log(newHeaderObject)
-        setHeader(newHeaderObject)
+
+        return newHeaderObject
     }
 
     const JsonStyle = {
@@ -62,224 +40,295 @@ function Main(props: props) {
         numberStyle: { color: 'darkorange' }
     }
 
-    return ( //bg-white
+    return (
         <div className="
-            w-full h-full
+            w-full min-h-screen h-full
             bg-sky-400 dark:bg-sky-900
             text-white font-sans dark:text-sky-400/75
-            
-        "
-        >
+        ">
 
             <div className="flex flex-row justify-center pb-5">
-                <h1 className="text-3xl font-bold underline mt-5">Web Request</h1>
+                <h1 className="text-4xl font-bold underline mt-5">Web Request</h1>
             </div>
 
 
-            <div className="grid grid-cols-8 gap-3 px-72 mb-10">
+            <div className="
+                vb:grid vb:grid-cols-8 md:grid-cols-1 so:flex so:flex-col
+                px-12 gap-12
+            ">
 
-                <div className="col-span-2">
-                    <label htmlFor="http-verb" className="block font-bold">Método</label>
-                    <select id="http-verb" className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg"
-                        onChange={event => setHttpMethod(event.target.value)}
-                    >
-                        <option value="get">GET</option>
-                        <option value="post">POST</option>
-                        <option value="put">PUT</option>
-                        <option value="patch">PATCH</option>
-                        <option value="delete">DELETE</option>
-                    </select>
-                </div>
+                <div className="vb:col-span-4 md:col-span-8">
+
+                    <div className="vb:grid vb:grid-cols-8 gap-3 mb-10">
+
+                        <div className="vb:col-span-2 xl:col-span-2 so:col-span-8">
+                            <label htmlFor="http-verb" className="block font-bold">Método</label>
+                            <select id="http-verb" className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg"
+                                onChange={event => setHttpMethod(event.target.value)}
+                            >
+                                <option value="get">GET</option>
+                                <option value="post">POST</option>
+                                <option value="put">PUT</option>
+                                <option value="patch">PATCH</option>
+                                <option value="delete">DELETE</option>
+                            </select>
+                        </div>
 
 
-                <div className="col-span-6">
-                    <label htmlFor="url" className="block font-bold">Url</label>
-                    <input id="url" type="text" className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg"
-                        value={url}
-                        onChange={event => setUrl(event.target.value)}
-                    />
-                </div>
+                        <div className="vb:col-span-6 so:col-span-8">
+                            <label htmlFor="url" className="block font-bold">Url</label>
+                            <input id="url" type="text" className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg"
+                                value={url}
+                                onChange={event => setUrl(event.target.value)}
+                            />
+                        </div>
 
-            </div>
-
-            <div className="grid grid-cols-8 gap-3 px-72 mb-10">
-                <div className="col-span-8">
-
-                    <div className="flex flex-row justify-center pb-5">
-                        <h1 className="text-xl font-bold  mt-5">Headers</h1>
                     </div>
+
                     {
-                        headers.map(
-                            (header, index) =>
-                                <div key={index} className="col-span-8">
+                        httpMethod !== 'get' &&
+                        <div className="grid grid-cols-8 gap-3 mb-10">
 
+                            <div className="col-span-8">
+                                <label className="font-bold block">Body</label>
 
-                                    <div className="flex justify-center gap-5">
-                                        <input type="text" placeholder='Chave' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg my-2 p-2"
-                                            value={headers[index].chave}
-                                            onChange={
-                                                event => {
-                                                    const newHeaders = [...headers]
-                                                    newHeaders[index].chave = event.target.value
+                                <textarea name="" id="" cols={51} rows={10} className={Constants.inputPatternClasses} value={body}
+                                    onChange={event => setBody(event.target.value)}
+                                >
+                                </textarea>
+                            </div>
 
-                                                    setHeaders(newHeaders)
-                                                }
-                                            }
-                                        />
-
-                                        <input type="text" placeholder='Valor' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg my-2 p-2"
-                                            value={headers[index].valor}
-                                            onChange={
-                                                event => {
-                                                    const newHeaders = [...headers]
-                                                    newHeaders[index].valor = event.target.value
-
-                                                    setHeaders(newHeaders)
-                                                }
-                                            }
-                                        />
-                                        <button
-                                            className="bg-sky-700 hover:bg-sky-800 hover:bg-sky-800 text-white font-bold px-2 rounded-full"
-                                            disabled={index !== 1 ? true : false}
-                                            onClick={
-                                                event => {
-                                                    const newHeaders = headers.filter(
-                                                        (item: object, index2: number) => index2 !== index
-                                                    )
-                                                    setHeaders(newHeaders)
-                                                }
-                                            }
-                                        >
-                                            <b className="fw">X</b>
-                                        </button>
-
-                                    </div>
-
-                                </div>
-                        )
+                        </div>
                     }
 
-                    <div className="flex flex-row justify-center pb-5 mt-10">
-                        <button
-                            className="bg-sky-700 hover:bg-sky-800 rounded-3xl text-white border-2 border-sky-900 p-2hover:bg-sky-700 p-3"
-                            onClick={event => setHeaders([...headers, { chave: "", valor: "" }])}
-                        >Adicionar</button>
-                    </div>
+                    <div className="grid grid-cols-8 gap-3 mb-10">
+                        <div className="col-span-8">
 
-                </div>
+                            <div className="flex flex-row justify-center pb-5">
+                                <h1 className="text-3xl font-bold  mt-5">Headers</h1>
+                            </div>
+                            {
+                                headers.map(
+                                    (header, index) =>
+                                        <div key={index} className="vb:grid vb:grid-cols-8 gap-5 so:flex so:flex-col so:border so:p-3 so:mb-5">
 
-            </div>
+                                            <div className="so:col-span-3">
+                                                <input type="text" placeholder='Chave' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg my-2 p-2"
+                                                    value={headers[index].chave}
+                                                    onChange={
+                                                        event => {
+                                                            const newHeaders = [...headers]
+                                                            newHeaders[index].chave = event.target.value
 
-
-            {
-                httpMethod !== 'get' &&
-                <div className="grid grid-cols-8 gap-3 px-72 mb-10">
-
-                    <div className="col-span-8">
-                        <label className="font-bold block">Body</label>
-
-                        <textarea name="" id="" cols={51} rows={10} className={Constants.inputPatternClasses} value={body}
-                            onChange={event => setBody(event.target.value)}
-                        >
-                        </textarea>
-                    </div>
-
-                </div>
-            }
-
-            <div className="grid grid-cols-8 gap-3 px-72 mb-10">
-
-                <div className="col-span-8">
-
-                    <div className="flex flex-row justify-center gap-14">
-
-                        {/* <button type="button" className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500" */}
-
-                        <button className="bg-sky-700 hover:bg-sky-800 rounded-3xl text-white border-2 border-sky-900 p-2"
-                            onClick={
-                                async () => {
-                                    if (url === '') {
-                                        toast.error(
-                                            <div>
-                                                <h5>Insira uma url</h5>
+                                                            setHeaders(newHeaders)
+                                                        }
+                                                    }
+                                                />
                                             </div>
-                                        )
-                                        return
-                                    }
 
-                                    generateHeader()
+                                            <div className="col-span-4">
+                                                <input type="text" placeholder='Valor' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg my-2 p-2"
+                                                    value={headers[index].valor}
+                                                    onChange={
+                                                        event => {
+                                                            const newHeaders = [...headers]
+                                                            newHeaders[index].valor = event.target.value
 
-                                    // @ts-ignore
-                                    axios({ method: httpMethod, url, data: body ? JSON.parse(body) : {}, headers: header, })
-                                        .then(
-                                            res => {
-                                                setRequestData(res.data)
-                                                setRequestStatus(`${res.status}`)
-                                            }
-                                        )
-                                        .catch(
-                                            error => console.log(error)
-                                        )
+                                                            setHeaders(newHeaders)
+                                                        }
+                                                    }
+                                                />
+                                            </div>
 
-                                    // axios.get('/p/')
-                                }
+                                            <div className="col-span-1">
+                                                <button
+                                                    className={
+                                                        index === 0 ?
+                                                            "bg-sky-900 text-white font-bold py-1 rounded-full mt-2 w-full" :
+                                                            "bg-sky-700 hover:bg-sky-800 text-white font-bold py-1 rounded-full mt-2 w-full cursor-pointer"
+
+                                                    }
+                                                    disabled={index === 0 ? true : false}
+                                                    onClick={
+                                                        event => {
+                                                            const newHeaders = headers.filter((item: object, index2: number) => index2 !== index)
+                                                            setHeaders(newHeaders)
+                                                        }
+                                                    }
+                                                >
+                                                    <b className="fw">X</b>
+                                                </button>
+                                            </div>
+
+                                            <div className="border-0 mb-0"></div>
+
+                                        </div>
+                                )
                             }
-                        >Fazer requisição</button>
 
-                        <button className="bg-sky-700 hover:bg-sky-800 rounded-3xl text-white border-2 border-sky-900 p-3"
-                            onClick={() => { setRequestData({}); setRequestStatus('Sem status ainda 😢') }}
-                        >Zerar o response</button>
+                            <div className="
+                                    vb:flex vb:flex-row
+                                    so:flex so:flex-col so:gap-3
+                                    pb-5 mt-10 
+                            ">
+                                <button className="
+                                    bg-sky-700 hover:bg-sky-800
+                                    border-2 border-sky-900
+                                    rounded-3xl vb:p-1 so:p-3
+                                    text-white
+                                    vb:w-1/3
+                                ">Adicionar Header</button>
+
+
+                                    <button className="
+                                        bg-sky-700 hover:bg-sky-800
+                                        border-2 border-sky-900
+                                        rounded-3xl vb:p-1 so:p-3
+                                        text-white
+                                        vb:w-1/3
+                                    "
+                                        onClick={
+                                            async () => {
+                                                if (url === '') {
+                                                    toast.error(
+                                                        <div>
+                                                            <h5>Insira uma url</h5>
+                                                        </div>
+                                                    )
+
+                                                    return
+                                                }
+
+                                                const startThePromise = toast.loading(
+                                                    "Processando...",
+                                                    // {
+                                                    //     autoClose: 5000,
+                                                    //     closeOnClick: true,
+                                                    // }
+                                                )
+
+                                                // @ts-ignore
+                                                axios({ method: httpMethod, url, data: body ? JSON.parse(body) : {}, headers: generateHeader(), })
+                                                    .then(
+                                                        res => {
+                                                            setRequestData(res.data)
+                                                            setRequestStatus(`${res.status}`)
+
+                                                            toast.update(
+                                                                startThePromise,
+                                                                {
+                                                                    render: <div><p>A requisição foi um sucesso!</p></div>,
+                                                                    type: "success",
+                                                                    isLoading: false,
+                                                                    closeButton: true,
+                                                                    autoClose: 5000,
+                                                                    closeOnClick: true,
+                                                                }
+                                                            )
+                                                        }
+                                                    )
+                                                    .catch(
+                                                        error => {
+                                                            // console.log(Object.keys(error));
+                                                            setRequestData(error)
+                                                            setRequestStatus(`${error.request.status}`)
+
+
+                                                            toast.update(
+                                                                startThePromise,
+                                                                {
+                                                                    render: <div><h1 className="font-bold">Oops...</h1><>Ocorreu um erro na sua requisição</></div>,
+                                                                    type: "error",
+                                                                    isLoading: false,
+                                                                    closeButton: true,
+                                                                    autoClose: 5000,
+                                                                    closeOnClick: true,
+                                                                }
+                                                            )
+                                                        }
+                                                    )
+                                            }
+                                        }
+                                    >Fazer requisição</button>
+
+                                    <button className="bg-sky-700 hover:bg-sky-800 rounded-3xl text-white border-2 border-sky-900 vb:p-1 so:p-3 vb:w-1/3 so:w-full"
+                                        onClick={
+                                            () => {
+                                                setRequestData({})
+                                                setRequestStatus('Sem status ainda 😢')
+
+                                            }
+                                        }
+                                    >Zerar o response</button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div className="grid grid-cols-8 gap-3 mb-10">
+
+                        <div className="col-span-8">
+
+                            <div className="flex flex-row justify-center gap-14">
+
+
+
+                            </div>
+
+                        </div>
 
                     </div>
 
                 </div>
 
 
-            </div>
 
-            <div className="grid grid-cols-8 gap-3 px-72 mb-10">
+                <div className="col-span-4">
 
-                <div className="col-span-8">
-                    <div className="flex flex-row justify-center gap-14">
+                    <div className="grid grid-cols-8 gap-3 mb-10 mt-6">
 
-                        <h5>Status: <span>{requestStatus}</span></h5>
+                        <div className="col-span-8">
+                            <div className="flex flex-row justify-center gap-14">
 
-                        <br />
+                            <h5 className={`font-bold text-xl sticky bottom-0 bg-sky-900 p-2 rounded`}>Status:
+                                    <span className={
+                                        requestStatus ?
+                                            requestStatus.match(/^2/) ?
+                                                'text-lime-400' :
+                                                requestStatus.match(/^3/) ?
+                                                    'text-yellow-500' :
+                                                    requestStatus.match(/^4/) ?
+                                                        'text-rose-400' :
+                                                        requestStatus.match(/^5/) ?
+                                                            'text-rose-600' :
+                                                            ''
+                                            :
 
-                        <h5>Descrição status</h5>
+                                            ''
+                                    } > {requestStatus}</span>
+                                </h5>
 
+                            </div>
+                        </div>
 
                     </div>
-                </div>
-            </div>
 
+                    <div className="grid grid-cols-8 gap-3 pb-20">
 
-            <div className="w-80     flex justify-center border-2 border-gray-400">
-                <JsonFormatter json={JSON.stringify(requestData)} tabWith='4' JsonStyle={JsonStyle} />
-            </div>
+                        <div ref={requestDataDisposition} style={{ minHeight: "520px", maxHeight: "520px", }} className="col-span-8 border-double border-4 border-sky-700 bg-white text-sky-800 overflow-auto">
+                            <JsonFormatter json={JSON.stringify(requestData)} tabWith='4' JsonStyle={JsonStyle} />
+                        </div>
 
-
-            {/* <div className="grid grid-cols-8 gap-3 px-72 pb-14">
-
-                <div className="col-span-8 text-xl border-solid border-2 h-64">
-
-                    <div className="w-full h-full border-2 border-gray-400">
-                    <JsonFormatter json={JSON.stringify(requestData)} tabWith='4' JsonStyle={JsonStyle} />
                     </div>
 
                 </div>
 
-            </div> */}
-
+            </div>
 
         </div>
     )
 }
 
-const mapStateToProps = (state: ReduxState) => {
-    return {
-        config: state.config
-    }
-}
-
-export default connect(mapStateToProps, null)(Main)
+export default Main

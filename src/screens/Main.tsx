@@ -212,13 +212,7 @@ function Main() {
                                                     return
                                                 }
 
-                                                const startThePromise = toast.loading(
-                                                    "Processando...",
-                                                    // {
-                                                    //     autoClose: 5000,
-                                                    //     closeOnClick: true,
-                                                    // }
-                                                )
+                                                const startThePromise = toast.loading("Processando...")
 
                                                 // @ts-ignore
                                                 axios({ method: httpMethod, url, data: body ? JSON.parse(body) : {}, headers: generateHeader(), })
@@ -280,25 +274,10 @@ function Main() {
 
                     </div>
 
-                    <div className="grid grid-cols-8 gap-3 mb-10">
-
-                        <div className="col-span-8">
-
-                            <div className="flex flex-row justify-center gap-14">
-
-
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
                 </div>
 
 
-
-                <div className="col-span-4 md:col-span-5">
+                <div className="vb:col-span-4 md:col-span-5">
 
                     <div className="grid grid-cols-8 gap-3 mb-10 mt-6">
 
@@ -345,3 +324,8 @@ function Main() {
 }
 
 export default Main
+
+/*
+    bg-sky-900 e rounded no response do json
+    aumentar o padding dos inputs e diminuir a borda
+*/

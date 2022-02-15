@@ -124,7 +124,7 @@ function Main() {
                                             <div key={index} className="vb:grid vb:grid-cols-8 gap-5 so:flex so:flex-col so:p-3"> {/*so:mb-5*/}
 
                                                 <div className="so:col-span-3 ">
-                                                    <input type="text" placeholder='Chave' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded p-2 my-2 p-2"
+                                                    <input type="text" placeholder='Chave' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded p-2 my-2"
                                                         value={headers[index].chave}
                                                         onChange={
                                                             event => {
@@ -138,7 +138,7 @@ function Main() {
                                                 </div>
 
                                                 <div className="col-span-4">
-                                                    <input type="text" placeholder='Valor' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded p-2 my-2 p-2"
+                                                    <input type="text" placeholder='Valor' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded p-2 my-2"
                                                         value={headers[index].valor}
                                                         onChange={
                                                             event => {

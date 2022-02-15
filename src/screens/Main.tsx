@@ -10,7 +10,7 @@ function Main() {
     const [url, setUrl] = useState('')
     const [httpMethod, setHttpMethod] = useState('get')
     const [body, setBody] = useState('')
-    const [headers, setHeaders] = useState([{ chave: "", valor: "" }])
+    const [headers, setHeaders] = useState([{ chave: "", valor: "" }, { chave: "", valor: "" }])
     const [requestData, setRequestData] = useState({})
     const [requestStatus, setRequestStatus] = useState('Sem status ainda 😢')
 
@@ -48,7 +48,7 @@ function Main() {
         ">
 
             <div className="flex flex-row justify-center pb-5">
-                <h1 className="text-4xl font-bold underline mt-5">Web Request</h1>
+                <h1 className="text-5xl font-bold underline mt-5 mb-5">Web Request</h1>
             </div>
 
 
@@ -72,7 +72,7 @@ function Main() {
                         "
                         >
                             <label htmlFor="http-verb" className="block font-bold">Método</label>
-                            <select id="http-verb" className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg"
+                            <select id="http-verb" className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded p-2"
                                 onChange={event => setHttpMethod(event.target.value)}
                             >
                                 <option value="get">GET</option>
@@ -86,7 +86,7 @@ function Main() {
 
                         <div className="vb:col-span-6 so:col-span-8">
                             <label htmlFor="url" className="block font-bold">Url</label>
-                            <input id="url" type="text" className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg"
+                            <input id="url" type="text" className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded p-2"
                                 value={url}
                                 onChange={event => setUrl(event.target.value)}
                             />
@@ -116,64 +116,68 @@ function Main() {
                             <div className="flex flex-row justify-center pb-5">
                                 <h1 className="text-3xl font-bold  mt-5">Headers</h1>
                             </div>
-                            {
-                                headers.map(
-                                    (header, index) =>
-                                        <div key={index} className="vb:grid vb:grid-cols-8 gap-5 so:flex so:flex-col so:p-3 so:mb-5">
+                            <div className="h-64 overflow-auto">
 
-                                            <div className="so:col-span-3">
-                                                <input type="text" placeholder='Chave' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg my-2 p-2"
-                                                    value={headers[index].chave}
-                                                    onChange={
-                                                        event => {
-                                                            const newHeaders = [...headers]
-                                                            newHeaders[index].chave = event.target.value
+                                {
+                                    headers.map(
+                                        (header, index) =>
+                                            <div key={index} className="vb:grid vb:grid-cols-8 gap-5 so:flex so:flex-col so:p-3"> {/*so:mb-5*/}
 
-                                                            setHeaders(newHeaders)
+                                                <div className="so:col-span-3 ">
+                                                    <input type="text" placeholder='Chave' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded p-2 my-2 p-2"
+                                                        value={headers[index].chave}
+                                                        onChange={
+                                                            event => {
+                                                                const newHeaders = [...headers]
+                                                                newHeaders[index].chave = event.target.value
+
+                                                                setHeaders(newHeaders)
+                                                            }
                                                         }
-                                                    }
-                                                />
-                                            </div>
+                                                    />
+                                                </div>
 
-                                            <div className="col-span-4">
-                                                <input type="text" placeholder='Valor' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded-lg my-2 p-2"
-                                                    value={headers[index].valor}
-                                                    onChange={
-                                                        event => {
-                                                            const newHeaders = [...headers]
-                                                            newHeaders[index].valor = event.target.value
+                                                <div className="col-span-4">
+                                                    <input type="text" placeholder='Valor' className="w-full border-2 border-gray-400 py-1 text-zinc-700 rounded p-2 my-2 p-2"
+                                                        value={headers[index].valor}
+                                                        onChange={
+                                                            event => {
+                                                                const newHeaders = [...headers]
+                                                                newHeaders[index].valor = event.target.value
 
-                                                            setHeaders(newHeaders)
+                                                                setHeaders(newHeaders)
+                                                            }
                                                         }
-                                                    }
-                                                />
-                                            </div>
+                                                    />
+                                                </div>
 
-                                            <div className="col-span-1">
-                                                <button
-                                                    className={
-                                                        index === 0 ?
-                                                            "bg-sky-900 text-white font-bold py-1 rounded-full mt-2 w-full" :
-                                                            "bg-sky-700 hover:bg-sky-800 text-white font-bold py-1 rounded-full mt-2 w-full cursor-pointer"
+                                                <div className="col-span-1">
+                                                    <button
+                                                        className={
+                                                            index === 0 ?
+                                                                "bg-sky-900 dark:bg-sky-800 text-white font-bold py-1 rounded-full mt-2 w-full" :
+                                                                "bg-sky-700 dark:bg-sky-700 hover:bg-sky-800 text-white font-bold py-1 rounded-full mt-2 w-full cursor-pointer"
 
-                                                    }
-                                                    disabled={index === 0 ? true : false}
-                                                    onClick={
-                                                        event => {
-                                                            const newHeaders = headers.filter((item: object, index2: number) => index2 !== index)
-                                                            setHeaders(newHeaders)
                                                         }
-                                                    }
-                                                >
-                                                    <b className="fw">X</b>
-                                                </button>
+                                                        disabled={index === 0 ? true : false}
+                                                        onClick={
+                                                            _ => {
+                                                                const newHeaders = headers.filter((item: object, index2: number) => index2 !== index)
+                                                                setHeaders(newHeaders)
+                                                            }
+                                                        }
+                                                    >
+                                                        <b className="fw">X</b>
+                                                    </button>
+                                                </div>
+
+                                                <div className="border-0 mb-0"></div>
+
                                             </div>
+                                    )
+                                }
 
-                                            <div className="border-0 mb-0"></div>
-
-                                        </div>
-                                )
-                            }
+                            </div>
 
                             <div className="
                                     vb:flex vb:flex-row
@@ -188,85 +192,85 @@ function Main() {
                                     vb:w-1/3
                                 "
                                     onClick={
-                                        () => setHeaders( [ ...headers, { chave: "", valor: "" } ] )
+                                        () => setHeaders([...headers, { chave: "", valor: "" }])
                                     }
                                 >Adicionar Header</button>
 
 
-                                    <button className="
+                                <button className="
                                         bg-sky-700 hover:bg-sky-800
                                         border-2 border-sky-900
                                         rounded-3xl vb:p-1 so:p-3
                                         text-white
                                         vb:w-1/3
                                     "
-                                        onClick={
-                                            async () => {
-                                                if (url === '') {
-                                                    toast.error(
-                                                        <div>
-                                                            <h5>Insira uma url</h5>
-                                                        </div>
-                                                    )
+                                    onClick={
+                                        async () => {
+                                            if (url === '') {
+                                                toast.error(
+                                                    <div>
+                                                        <h5>Insira uma url</h5>
+                                                    </div>
+                                                )
 
-                                                    return
-                                                }
-
-                                                const startThePromise = toast.loading("Processando...")
-
-                                                // @ts-ignore
-                                                axios({ method: httpMethod, url, data: body ? JSON.parse(body) : {}, headers: generateHeader(), })
-                                                    .then(
-                                                        res => {
-                                                            setRequestData(res.data)
-                                                            setRequestStatus(`${res.status}`)
-
-                                                            toast.update(
-                                                                startThePromise,
-                                                                {
-                                                                    render: <div><p>A requisição foi um sucesso!</p></div>,
-                                                                    draggable: true,
-                                                                    type: "success",
-                                                                    isLoading: false,
-                                                                    closeButton: true,
-                                                                    autoClose: 5000,
-                                                                    closeOnClick: true,
-                                                                }
-                                                            )
-                                                        }
-                                                    )
-                                                    .catch(
-                                                        error => {
-                                                            setRequestData(error)
-                                                            setRequestStatus(`${error.request.status}`)
-
-                                                            toast.update(
-                                                                startThePromise,
-                                                                {
-                                                                    render: <div><h1 className="font-bold">Oops...</h1><>Ocorreu um erro na sua requisição</></div>,
-                                                                    draggable: true,
-                                                                    type: "error",
-                                                                    isLoading: false,
-                                                                    closeButton: true,
-                                                                    autoClose: 5000,
-                                                                    closeOnClick: true,
-                                                                }
-                                                            )
-                                                        }
-                                                    )
+                                                return
                                             }
-                                        }
-                                    >Fazer requisição</button>
 
-                                    <button className="bg-sky-700 hover:bg-sky-800 rounded-3xl text-white border-2 border-sky-900 vb:p-1 so:p-3 vb:w-1/3 so:w-full"
-                                        onClick={
-                                            () => {
-                                                setRequestData({})
-                                                setRequestStatus('Sem status ainda 😢')
+                                            const startThePromise = toast.loading("Processando...")
 
-                                            }
+                                            // @ts-ignore
+                                            axios({ method: httpMethod, url, data: body ? JSON.parse(body) : {}, headers: generateHeader(), })
+                                                .then(
+                                                    res => {
+                                                        setRequestData(res.data)
+                                                        setRequestStatus(`${res.status}`)
+
+                                                        toast.update(
+                                                            startThePromise,
+                                                            {
+                                                                render: <div><p>A requisição foi um sucesso!</p></div>,
+                                                                draggable: true,
+                                                                type: "success",
+                                                                isLoading: false,
+                                                                closeButton: true,
+                                                                autoClose: 5000,
+                                                                closeOnClick: true,
+                                                            }
+                                                        )
+                                                    }
+                                                )
+                                                .catch(
+                                                    error => {
+                                                        setRequestData(error)
+                                                        setRequestStatus(`${error.request.status}`)
+
+                                                        toast.update(
+                                                            startThePromise,
+                                                            {
+                                                                render: <div><h1 className="font-bold">Oops...</h1><>Ocorreu um erro na sua requisição</></div>,
+                                                                draggable: true,
+                                                                type: "error",
+                                                                isLoading: false,
+                                                                closeButton: true,
+                                                                autoClose: 5000,
+                                                                closeOnClick: true,
+                                                            }
+                                                        )
+                                                    }
+                                                )
                                         }
-                                    >Zerar o response</button>
+                                    }
+                                >Fazer requisição</button>
+
+                                <button className="bg-sky-700 hover:bg-sky-800 rounded-3xl text-white border-2 border-sky-900 vb:p-1 so:p-3 vb:w-1/3 so:w-full"
+                                    onClick={
+                                        () => {
+                                            setRequestData({})
+                                            setRequestStatus('Sem status ainda 😢')
+
+                                        }
+                                    }
+                                >Zerar o response</button>
 
                             </div>
 
@@ -284,7 +288,7 @@ function Main() {
                         <div className="col-span-8">
                             <div className="flex flex-row justify-center gap-14">
 
-                            <h5 className={`font-bold text-xl sticky bottom-0 bg-sky-900 p-2 rounded`}>Status:
+                                <h5 className={`font-bold text-xl dark:text-white sticky bottom-0 bg-sky-900 dark:bg-sky-700 p-2 rounded`}>Status:
                                     <span className={
                                         requestStatus ?
                                             requestStatus.match(/^2/) ?
@@ -327,5 +331,4 @@ export default Main
 
 /*
     bg-sky-900 e rounded no response do json
-    aumentar o padding dos inputs e diminuir a borda
 */

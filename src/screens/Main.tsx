@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { Constants } from '../Constants'
@@ -15,6 +15,12 @@ function Main() {
     const [requestStatus, setRequestStatus] = useState('Sem status ainda 😢')
 
     const requestDataDisposition = React.useRef<HTMLInputElement>(null)
+
+    useEffect(
+        () => {
+            console.log("Createde by Davi Silva Rafacho")
+        }, []
+    )
 
     function generateHeader() {
         interface IterableObject {
@@ -323,12 +329,12 @@ function Main() {
 
             </div>
 
+            <div className="pl-8 text-white dark:text-indigo-300">
+                <p>Created by Davi Silva Rafacho</p>
+            </div>
+
         </div>
     )
 }
 
 export default Main
-
-/*
-    bg-sky-900 e rounded no response do json
-*/

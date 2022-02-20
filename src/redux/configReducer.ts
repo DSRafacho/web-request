@@ -15,7 +15,6 @@ const initialState = {
 }
 
 export function ConfigReducer (state = initialState, action: Action) {
-    var newState = { ...state }
     switch (action.type) {
         case ActionTypes.CRIAR_HEADER:
             console.log("´===> CRIAR_HEADER")
